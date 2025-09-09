@@ -1,26 +1,235 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
+/* Custom CSS Variables for Brand Colors */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --color-gold-primary: #D4AF37;
+  --color-gold-light: #F4CD54;
+  --color-gold-dark: #B8941F;
+  --color-black: #000000;
+  --color-white: #FFFFFF;
+  --color-gray-50: #FAFAFA;
+  --color-gray-100: #F5F5F5;
+  --color-gray-900: #171717;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* Font Imports */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap');
+
+/* Base Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
+  overflow-x: hidden;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: var(--color-white);
+  color: var(--color-black);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Typography Enhancements */
+.font-display {
+  font-family: 'Playfair Display', serif;
+}
+
+.font-brand {
+  font-family: 'Montserrat', sans-serif;
+}
+
+/* Custom Utilities */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-gray-100);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-gold-primary);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-gold-dark);
+}
+
+/* Selection Styles */
+::selection {
+  background-color: var(--color-gold-primary);
+  color: var(--color-black);
+}
+
+::-moz-selection {
+  background-color: var(--color-gold-primary);
+  color: var(--color-black);
+}
+
+/* Focus Styles */
+.focus-gold {
+  @apply focus:outline-none focus:ring-2 focus:ring-gold-500 focus:ring-offset-2;
+}
+
+/* Button Styles */
+.btn-primary {
+  @apply bg-black text-white px-6 py-3 font-semibold hover:bg-gold-500 hover:text-black transition-all duration-300 transform hover:scale-105;
+}
+
+.btn-secondary {
+  @apply border-2 border-black text-black px-6 py-3 font-semibold hover:bg-black hover:text-white transition-all duration-300;
+}
+
+.btn-gold {
+  @apply bg-gold-500 text-black px-6 py-3 font-semibold hover:bg-gold-600 transition-all duration-300 transform hover:scale-105;
+}
+
+/* Card Styles */
+.card-elegance {
+  @apply bg-white rounded-lg shadow-soft hover:shadow-strong transition-all duration-300 overflow-hidden;
+}
+
+/* Form Styles */
+.input-elegance {
+  @apply w-full px-4 py-3 border-2 border-gray-300 focus:border-gold-500 focus:ring-0 outline-none transition-colors duration-300 bg-white text-black;
+}
+
+.select-elegance {
+  @apply w-full px-4 py-3 border-2 border-gray-300 focus:border-gold-500 focus:ring-0 outline-none transition-colors duration-300 bg-white text-black;
+}
+
+/* Animation Classes */
+.animate-fade-in {
+  animation: fadeIn 0.6s ease-out forwards;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.4s ease-out forwards;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.3s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Loading Spinner */
+.spinner {
+  @apply animate-spin rounded-full border-b-2 border-gold-500;
+}
+
+/* Toast Customization */
+.Toaster__toast {
+  @apply font-medium;
+}
+
+.Toaster__toast--success {
+  @apply bg-black text-white;
+}
+
+.Toaster__toast--error {
+  @apply bg-red-600 text-white;
+}
+
+/* Responsive Utilities */
+@media (max-width: 640px) {
+  .responsive-padding {
+    @apply px-4;
+  }
+}
+
+@media (min-width: 641px) {
+  .responsive-padding {
+    @apply px-6;
+  }
+}
+
+@media (min-width: 1024px) {
+  .responsive-padding {
+    @apply px-8;
+  }
+}
+
+/* Print Styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+  .btn-primary {
+    @apply border-2 border-current;
+  }
+  
+  .card-elegance {
+    @apply border border-gray-400;
+  }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
