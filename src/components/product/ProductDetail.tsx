@@ -46,17 +46,17 @@ export function ProductDetailPage({ product, relatedProducts }: ProductDetailPag
   
   // Extract unique colors and sizes from variants
   const uniqueColors = useMemo(() => {
-    const colors = product.variants
-      ?.map((v: any) => v.color)
-      .filter((c: string) => c && c.trim() !== '')
-    return [...new Set(colors)]
+    const colors: string[] = (product.variants ?? [])
+      .map((v: any) => String(v?.color ?? ''))
+      .filter((c) => c.trim() !== '')
+    return Array.from(new Set(colors))
   }, [product.variants])
 
   const uniqueSizes = useMemo(() => {
-    const sizes = product.variants
-      ?.map((v: any) => v.size)
-      .filter((s: string) => s && s.trim() !== '')
-    return [...new Set(sizes)]
+    const sizes: string[] = (product.variants ?? [])
+      .map((v: any) => String(v?.size ?? ''))
+      .filter((s) => s.trim() !== '')
+    return Array.from(new Set(sizes))
   }, [product.variants])
 
   // Selection state
