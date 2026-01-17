@@ -8,7 +8,7 @@ import { HeartIcon as HeartSolidIcon, StarIcon as StarSolidIcon } from '@heroico
 import { useCart } from '@/hooks/useCart'
 import { useWishlist } from '@/hooks/useWishlist'
 import { formatPrice } from '@/lib/utils'
-import { ProductCard } from './ProductCard'
+import  ProductCard  from './ProductCard'
 import { toast } from 'react-hot-toast'
 
 interface ProductDetailPageProps {
