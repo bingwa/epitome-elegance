@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
+import { usePathname } from 'next/navigation' // ADD THIS
 import { ShoppingBagIcon, MagnifyingGlassIcon, Bars3Icon, UserIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useCart, useCartTotals } from '@/hooks/useCart'
@@ -18,7 +19,7 @@ const navigation = [
       { name: 'Bags', href: '/women/bags' },
       { name: 'Shoes', href: '/women/shoes' },
       { name: 'Jewelry', href: '/women/jewelry' },
-    ]
+    ],
   },
   {
     name: 'Men',
@@ -26,10 +27,10 @@ const navigation = [
     submenu: [
       { name: 'Clothing', href: '/men/clothing' },
       { name: 'Accessories', href: '/men/accessories' },
-    ]
+    ],
   },
   { name: 'New Arrivals', href: '/new-arrivals' },
-  { name: 'About', href: '/about' }, // ← Added the About link here
+  { name: 'About', href: '/about' },
   { name: 'Sale', href: '/sale', special: true },
 ]
 
@@ -37,203 +38,187 @@ export function Header() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isSearchOpen, setIsSearchOpen] = useState(false)
-  const [hoveredMenu, setHoveredMenu] = useState<string | null>(null)
-
+  const [hoveredMenu, setHoveredMenu] = useState<number | null>(null)
   const cart = useCart()
   const { totalItems } = useCartTotals()
+  const pathname = usePathname() // ADD THIS
+  
+  // ADD THIS: Check if we're on homepage
+  const isHome = pathname === '/'
 
   useEffect(() => {
     const handleScroll = () => {
-      // Set scrolled state if user scrolls down more than 10 pixels
       setIsScrolled(window.scrollY > 10)
     }
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
+  // MODIFY THIS: Only use transparent bg on home when not scrolled
+  const shouldBeTransparent = isHome && !isScrolled
+
   return (
     <>
+      {/* Mobile Menu */}
+      <MobileMenu isOpen={isMobileMenuOpen} onClose={() => setIsMobileMenuOpen(false)} />
+
+      {/* Search Modal */}
+      {isSearchOpen && (
+        <div
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-start justify-center pt-20"
+          onClick={() => setIsSearchOpen(false)}
+        >
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="bg-white rounded-2xl p-8 max-w-2xl w-full mx-4 shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-display font-bold">Search Products</h2>
+              <button
+                onClick={() => setIsSearchOpen(false)}
+                className="p-2 text-gray-400 hover:text-black rounded-full hover:bg-gray-100 transition-colors"
+                aria-label="Close search">
+                <XMarkIcon className="w-6 h-6" />
+              </button>
+            </div>
+            <SearchBar onClose={() => setIsSearchOpen(false)} />
+          </motion.div>
+        </div>
+      )}
+
+      {/* Header */}
       <header
-        className={`fixed top-0 w-full z-50 transition-all duration-300 ${
-          // Apply background and shadow only when scrolled
-          isScrolled
-            ? 'bg-white/90 backdrop-blur-md shadow-sm'
-            : 'bg-transparent'
+        className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
+          shouldBeTransparent
+            ? 'bg-transparent'
+            : 'bg-white/95 backdrop-blur-md shadow-sm'
         }`}
       >
-
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-20">
             {/* Mobile menu button */}
             <button
               onClick={() => setIsMobileMenuOpen(true)}
-              className={`lg:hidden p-2 transition-colors ${
-                isScrolled ? 'text-black' : 'text-white'
+              className={`lg:hidden p-2 rounded-lg transition-colors ${
+                shouldBeTransparent
+                  ? 'text-white hover:bg-white/10'
+                  : 'text-gray-900 hover:bg-gray-100'
               }`}
-            >
-              <Bars3Icon className="h-6 w-6" />
+              aria-label="Open menu">
+              <Bars3Icon className="w-6 h-6" />
             </button>
 
-            {/* Logo and Title */}
-            <Link href="/" className="flex items-center gap-3 group">
-              <Image
-                src="/logo.png"
-                alt="Epitome Elegance Logo"
-                width={40}
-                height={40}
-                className="h-10 w-auto"
-              />
-              <h1
-                className={`text-3xl lg:text-4xl font-logo font-bold transition-colors ${
-                  isScrolled ? 'text-black' : 'text-white'
-                }`}
-              >
+            {/* Logo */}
+            <Link href="/" className="flex items-center space-x-3 group">
+              <div className={`relative w-10 h-10 rounded-xl overflow-hidden transition-all`}>
+                <Image
+                  src="/logo.png"
+                  alt="Epitome Elegance"
+                  fill
+                  className="object-contain p-2"
+                />
+              </div>
+              <span className={`font-logo text-2xl lg:text-3xl transition-colors ${
+                shouldBeTransparent ? 'text-white' : 'text-gray-900'
+              }`}>
                 Epitome Elegance
-              </h1>
+              </span>
             </Link>
 
             {/* Desktop Navigation */}
             <nav className="hidden lg:flex items-center space-x-8">
-              {navigation.map((item) => (
+              {navigation.map((item, index) => (
                 <div
                   key={item.name}
-                  className="relative group"
-                  onMouseEnter={() => setHoveredMenu(item.name)}
+                  className="relative"
+                  onMouseEnter={() => item.submenu && setHoveredMenu(index)}
                   onMouseLeave={() => setHoveredMenu(null)}
                 >
                   <Link
                     href={item.href}
-                    className={`font-semibold text-lg transition-colors ${
+                    className={`text-sm font-medium tracking-wide transition-colors relative group ${
                       item.special
-                        ? 'text-gold-500 hover:text-gold-400' // Sale item styling
-                        : isScrolled
-                        ? 'text-black hover:text-gold-600'
-                        : 'text-white hover:text-gray-200'
+                        ? 'text-yellow-600'
+                        : shouldBeTransparent
+                        ? 'text-white hover:text-yellow-400'
+                        : 'text-gray-900 hover:text-yellow-600'
                     }`}
                   >
                     {item.name}
-                    {item.special && (
-                      <motion.span
-                        animate={{ scale: [1, 1.1, 1] }}
-                        transition={{ duration: 2, repeat: Infinity }}
-                        className="absolute -top-1 -right-2 w-2 h-2 bg-gold-500 rounded-full"
-                      />
-                    )}
+                    <span className={`absolute -bottom-1 left-0 w-0 h-0.5 transition-all duration-300 group-hover:w-full ${
+                      shouldBeTransparent ? 'bg-yellow-400' : 'bg-yellow-600'
+                    }`} />
                   </Link>
-                  
-                  {/* Dropdown Menu */}
-                  <AnimatePresence>
-                    {item.submenu && hoveredMenu === item.name && (
-                      <motion.div
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: 10 }}
-                        transition={{ duration: 0.2 }}
-                        className="absolute left-0 top-full mt-2 bg-white shadow-strong rounded-lg py-4 min-w-64 z-50"
-                      >
-                        {item.submenu.map((subitem, index) => (
-                          <motion.div
-                            key={subitem.name}
-                            initial={{ opacity: 0, x: -10 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ duration: 0.1, delay: index * 0.05 }}
-                          >
-                            <Link
-                              href={subitem.href}
-                              className="block px-6 py-3 text-gray-700 hover:text-gold-500 hover:bg-gold-50 font-medium transition-all duration-200"
-                            >
-                              {subitem.name}
-                            </Link>
-                          </motion.div>
-                        ))}
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
+
+                  {/* Submenu */}
+                  {item.submenu && hoveredMenu === index && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 10 }}
+                      className="absolute top-full left-0 mt-2 w-48 bg-white rounded-xl shadow-lg py-2 border border-gray-100"
+                    >
+                      {item.submenu.map((subItem) => (
+                        <Link
+                          key={subItem.name}
+                          href={subItem.href}
+                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-yellow-600 transition-colors"
+                        >
+                          {subItem.name}
+                        </Link>
+                      ))}
+                    </motion.div>
+                  )}
                 </div>
               ))}
             </nav>
 
-            {/* Header Actions */}
-            <div className="flex items-center space-x-4">
+            {/* Icons */}
+            <div className="flex items-center space-x-2 lg:space-x-4">
               <button
                 onClick={() => setIsSearchOpen(true)}
-                className={`p-2 transition-colors ${
-                  isScrolled ? 'text-black hover:text-gold-600' : 'text-white hover:text-gray-200'
+                className={`p-2 rounded-full transition-colors ${
+                  shouldBeTransparent
+                    ? 'text-white hover:bg-white/10'
+                    : 'text-gray-900 hover:bg-gray-100'
                 }`}
-              >
-                <MagnifyingGlassIcon className="h-6 w-6" />
+                aria-label="Search">
+                <MagnifyingGlassIcon className="w-5 h-5" />
               </button>
-              
+
               <Link
                 href="/account"
-                className={`hidden md:flex p-2 transition-colors ${
-                  isScrolled ? 'text-black hover:text-gold-600' : 'text-white hover:text-gray-200'
+                className={`p-2 rounded-full transition-colors ${
+                  shouldBeTransparent
+                    ? 'text-white hover:bg-white/10'
+                    : 'text-gray-900 hover:bg-gray-100'
                 }`}
-              >
-                <UserIcon className="h-6 w-6" />
+                aria-label="Account">
+                <UserIcon className="w-5 h-5" />
               </Link>
-              
-              <button onClick={cart.openCart} className="relative p-2">
-                <ShoppingBagIcon
-                  className={`h-6 w-6 transition-colors ${
-                    isScrolled ? 'text-black hover:text-gold-600' : 'text-white hover:text-gray-200'
-                  }`}
-                />
-                <AnimatePresence>
-                  {totalItems > 0 && (
-                    <motion.span
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      exit={{ scale: 0 }}
-                      className="absolute -top-1 -right-1 bg-gold-500 text-black text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center min-w-[20px]"
-                    >
-                      {totalItems > 99 ? '99+' : totalItems}
-                    </motion.span>
-                  )}
-                </AnimatePresence>
+
+              <button
+                onClick={() => cart.openCart()}
+                className={`p-2 rounded-full relative transition-colors ${
+                  shouldBeTransparent
+                    ? 'text-white hover:bg-white/10'
+                    : 'text-gray-900 hover:bg-gray-100'
+                }`}
+                aria-label="Cart">
+                <ShoppingBagIcon className="w-5 h-5" />
+                {totalItems > 0 && (
+                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-yellow-500 text-white text-xs font-bold rounded-full flex items-center justify-center">
+                    {totalItems}
+                  </span>
+                )}
               </button>
             </div>
           </div>
         </div>
       </header>
-
-      {/* Mobile Menu */}
-      <MobileMenu isOpen={isMobileMenuOpen} onClose={() => setIsMobileMenuOpen(false)} />
-
-      {/* Search Modal */}
-      <AnimatePresence>
-        {isSearchOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm"
-            onClick={() => setIsSearchOpen(false)}
-          >
-            <motion.div
-              initial={{ y: -50, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={{ y: -50, opacity: 0 }}
-              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="bg-white m-4 mt-24 rounded-lg shadow-strong overflow-hidden"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="flex items-center justify-between p-6 border-b border-gray-100">
-                <h3 className="text-2xl font-logo font-bold text-black">Search Products</h3>
-                <button
-                  onClick={() => setIsSearchOpen(false)}
-                  className="p-2 text-gray-400 hover:text-black rounded-full hover:bg-gray-100 transition-colors"
-                >
-                  <XMarkIcon className="h-6 w-6" />
-                </button>
-              </div>
-              <div className="p-6">
-                <SearchBar onSelect={() => setIsSearchOpen(false)} />
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </>
   )
 }

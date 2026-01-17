@@ -233,3 +233,14 @@ body {
     transition-duration: 0.01ms !important;
   }
 }
+
+
+
+
+/* Hide main header/footer on all admin pages */
+body.admin-auth header,
+body.admin-auth footer,
+body.admin-page header,
+body.admin-page footer {
+  display: none !important;
+}

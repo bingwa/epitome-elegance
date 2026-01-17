@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { FunnelIcon, Squares2X2Icon, Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
-import { ProductCard } from '@/components/product/ProductCard'
+import  ProductCard  from '@/components/product/ProductCard'
 import { formatPrice } from '@/lib/utils'
 import { motion, AnimatePresence } from 'framer-motion'
 
@@ -289,7 +289,7 @@ export function CategoryPage({
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3, delay: index * 0.05 }}
             >
-              <ProductCard product={product} />
+              <ProductCard product={product}/>
             </motion.div>
           ))}
         </div>

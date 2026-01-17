@@ -77,9 +77,8 @@ export function Footer() {
           <div>
             <h4 className="font-semibold text-lg mb-6">Get in Touch</h4>
             <div className="space-y-3 text-gray-300">
-              <p>📧 support@epitomeelegance.co.ke</p>
+              <p>📧 epitomeelegance58@gmail.com</p>
               <p>📱 +254 700 000 000</p>
-              <p>🏪 Nairobi, Kenya</p>
             </div>
           </div>
         </div>

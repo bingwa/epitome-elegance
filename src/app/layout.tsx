@@ -18,43 +18,14 @@ const playfair = Playfair_Display({
 })
 
 const signatieFont = localFont({
-  src: '../assets/fonts/Signatie.otf', // Make sure this path is correct
+  src: '../assets/fonts/Signatie.otf',
   display: 'swap',
-  variable: '--font-logo', // Assign it to a new CSS variable --font-logo
+  variable: '--font-logo',
 })
 
 export const metadata: Metadata = {
   title: 'Epitome Elegance - Luxury Fashion in Kenya',
-  description: 'Discover luxury fashion at Epitome Elegance. Premium clothing, bags, shoes, and jewelry for men and women. Free shipping across Kenya on orders over KSh 5,000.',
-  keywords: 'fashion, luxury, Kenya, clothing, bags, shoes, jewelry, M-Pesa, online shopping',
-  authors: [{ name: 'Epitome Elegance' }],
-  creator: 'Epitome Elegance',
-  publisher: 'Epitome Elegance',
-  openGraph: {
-    type: 'website',
-    locale: 'en_KE',
-    url: 'https://epitomeelegance.co.ke',
-    title: 'Epitome Elegance - Luxury Fashion in Kenya',
-    description: 'Discover luxury fashion at Epitome Elegance. Premium clothing, bags, shoes, and jewelry.',
-    siteName: 'Epitome Elegance',
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Epitome Elegance - Luxury Fashion in Kenya',
-    description: 'Discover luxury fashion at Epitome Elegance. Premium clothing, bags, shoes, and jewelry.',
-    creator: '@epitomeelegance',
-  },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      'max-video-preview': -1,
-      'max-image-preview': 'large',
-      'max-snippet': -1,
-    },
-  },
+  description: 'Discover luxury fashion at Epitome Elegance.',
 }
 
 export default function RootLayout({

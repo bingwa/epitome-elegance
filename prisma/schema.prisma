@@ -7,67 +7,6 @@ datasource db {
   url      = "file:./dev.db"
 }
 
-model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  password  String?
-  firstName String?
-  lastName  String?
-  role      String   @default("CUSTOMER") // Changed from Role enum
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  // Relations
-  addresses Address[]
-  orders    Order[]
-  reviews   Review[]
-  
-  // NextAuth
-  accounts Account[]
-  sessions Session[]
-
-  @@map("users")
-}
-
-model Account {
-  id                String  @id @default(cuid())
-  userId            String
-  type              String
-  provider          String
-  providerAccountId String
-  refresh_token     String?
-  access_token      String?
-  expires_at        Int?
-  token_type        String?
-  scope             String?
-  id_token          String?
-  session_state     String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([provider, providerAccountId])
-  @@map("accounts")
-}
-
-model Session {
-  id           String   @id @default(cuid())
-  sessionToken String   @unique
-  userId       String
-  expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@map("sessions")
-}
-
-model VerificationToken {
-  identifier String
-  token      String   @unique
-  expires    DateTime
-
-  @@unique([identifier, token])
-  @@map("verificationtokens")
-}
-
 model Category {
   id           String     @id @default(cuid())
   name         String
@@ -116,9 +55,11 @@ model Product {
   reviews      Review[]
   cartItems    CartItem[]
   orderItems   OrderItem[]
+  history      ProductHistory[]  // ADD THIS LINE
 
   @@map("products")
 }
+
 
 model ProductImage {
   id           String  @id @default(cuid())
@@ -167,7 +108,6 @@ model CartItem {
 
 model Address {
   id          String  @id @default(cuid())
-  userId      String
   firstName   String
   lastName    String
   company     String?
@@ -181,7 +121,7 @@ model Address {
   isDefault   Boolean @default(false)
   type        String  @default("SHIPPING") // Changed from AddressType enum
 
-  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
 
   @@map("addresses")
 }
@@ -189,21 +129,26 @@ model Address {
 model Order {
   id              String      @id @default(cuid())
   orderNumber     String      @unique
-  userId          String?
   email           String
   firstName       String      
   lastName        String
   phone           String
-  status          String      @default("PENDING") // Changed from OrderStatus enum
+  status          String      @default("PENDING")
   subtotal        Float
   tax             Float
   shipping        Float
   total           Float
   currency        String      @default("KSH")
-  paymentStatus   String      @default("PENDING") // Changed from PaymentStatus enum
+  paymentStatus   String      @default("PENDING")
   paymentMethod   String?
-  mpesaReceiptId  String?     
-  sessionId       String?     
+  mpesaReceiptId  String? 
+  fulfillmentStatus String    @default("PENDING")  // Changed from FulfillmentStatus enum
+  trackingNumber String? 
+  shippedAt       DateTime?
+  deliveredAt     DateTime?    
+  payoutStatus    String      @default("PENDING")  // Changed from PayoutStatus enum
+  payoutAmount    Float?
+  payoutDate      DateTime?
   
   // Shipping Address (embedded for guest orders)
   shippingFirstName   String
@@ -217,12 +162,12 @@ model Order {
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
 
-  user            User?       @relation(fields: [userId], references: [id])
   items           OrderItem[]
   tracking        OrderTracking[]
 
   @@map("orders")
 }
+
 
 model OrderItem {
   id        String  @id @default(cuid())
@@ -266,16 +211,44 @@ model Review {
   createdAt DateTime @default(now())
 
   product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
 
-  @@unique([productId, userId])
+  @@unique([productId])
   @@map("reviews")
 }
 
-// Note: Enums converted to string constants for SQLite compatibility
-// Valid values:
-// Role: "CUSTOMER" | "ADMIN" | "SUPER_ADMIN"
+model Admin {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      String   @default("ADMIN")  // Changed from AdminRole enum
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+
+model ProductHistory {
+  id            String   @id @default(cuid())
+  productId     String
+  product       Product  @relation(fields: [productId], references: [id])
+  action        String   // Changed from InventoryAction enum
+  quantity      Int
+  previousStock Int
+  newStock      Int
+  note          String?
+  createdAt     DateTime @default(now())
+  createdBy     String
+}
+
+
+
+// Valid values for String fields:
 // Gender: "MALE" | "FEMALE" | "UNISEX"
 // AddressType: "SHIPPING" | "BILLING"
 // OrderStatus: "PENDING" | "PROCESSING" | "SHIPPED" | "DELIVERED" | "CANCELLED" | "REFUNDED"
 // PaymentStatus: "PENDING" | "PAID" | "FAILED" | "REFUNDED"
+// FulfillmentStatus: "PENDING" | "PROCESSING" | "SHIPPED" | "DELIVERED" | "CANCELLED"
+// PayoutStatus: "PENDING" | "PROCESSING" | "COMPLETED" | "FAILED"
+// AdminRole: "ADMIN" | "SUPER_ADMIN"
+// InventoryAction: "ADDED" | "SOLD" | "ADJUSTED" | "RETURNED"
