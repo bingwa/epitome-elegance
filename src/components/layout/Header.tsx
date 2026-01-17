@@ -84,7 +84,7 @@ export function Header() {
                 <XMarkIcon className="w-6 h-6" />
               </button>
             </div>
-            <SearchBar onClose={() => setIsSearchOpen(false)} />
+            <SearchBar onSelect={() => setIsSearchOpen(false)} />
           </motion.div>
         </div>
       )}
