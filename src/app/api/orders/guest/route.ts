@@ -70,7 +70,7 @@ export async function POST(req: NextRequest) {
         firstName: validatedData.firstName,
         lastName: validatedData.lastName,
         phone: formatPhoneNumber(validatedData.phone),
-        sessionId: validatedData.sessionId,
+      
         
         // Shipping details
         shippingFirstName: validatedData.firstName,
