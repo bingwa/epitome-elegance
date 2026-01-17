@@ -1,5 +1,6 @@
 'use client'
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
+import type { ChangeEvent, FormEvent } from 'react'
 import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
 import { Save, X, Plus, Trash2, UploadCloud, Image as ImageIcon } from 'lucide-react'
@@ -25,7 +26,6 @@ interface ProductFormProps {
 
 export default function ProductForm({ product, categories }: ProductFormProps) {
   const router = useRouter()
-  const fileInputRef = useRef<HTMLInputElement>(null)
   const [loading, setLoading] = useState(false)
   const [uploading, setUploading] = useState(false)
   
@@ -34,26 +34,27 @@ export default function ProductForm({ product, categories }: ProductFormProps) {
     slug: product?.slug || '',
     description: product?.description || '',
     shortDesc: product?.shortDesc || '',
-    price: product?.price || '',
-    comparePrice: product?.comparePrice || '',
+    price: product?.price !== null && product?.price !== undefined ? String(product.price) : '',
+    comparePrice: product?.comparePrice !== null && product?.comparePrice !== undefined ? String(product.comparePrice) : '',
     sku: product?.sku || '',
     brand: product?.brand || '',
     tags: product?.tags || '',
-    stockQuantity: product?.stockQuantity || '',
+    stockQuantity: product?.stockQuantity !== null && product?.stockQuantity !== undefined ? String(product.stockQuantity) : '',
     isActive: product?.isActive ?? true,
     isFeatured: product?.isFeatured ?? false,
   })
   
   // Multi-category selection - Initialize with existing categories
-  const [selectedCategories, setSelectedCategories] = useState<string[]>(
-    product?.categories?.map((c: any) => c.id) || []
-  )
+  const [selectedCategories, setSelectedCategories] = useState<string[]>(() => {
+    const multi = product?.categories?.map((c: any) => c.id) || []
+    if (multi.length > 0) return multi
+    const single = product?.categoryId || product?.category?.id
+    return single ? [single] : []
+  })
   
-  const [images, setImages] = useState<string[]>(
-    product?.images?.map((img: any) => img.url) || []
-  )
+  const [images, setImages] = useState<string[]>(() => product?.images?.map((img: any) => img.url) || [])
   
-  const [variants, setVariants] = useState(
+  const [variants, setVariants] = useState(() =>
     product?.variants?.map((v: any) => ({
       size: v.size || '',
       color: v.color || '',
@@ -62,7 +63,7 @@ export default function ProductForm({ product, categories }: ProductFormProps) {
     })) || []
   )
   
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target
     setFormData(prev => ({
       ...prev,
@@ -83,68 +84,77 @@ export default function ProductForm({ product, categories }: ProductFormProps) {
   }
 
   useEffect(() => {
-  const script = document.createElement('script')
-  script.src = 'https://upload-widget.cloudinary.com/global/all.js'
-  script.async = true
-  document.body.appendChild(script)
+    const script = document.createElement('script')
+    script.src = 'https://upload-widget.cloudinary.com/global/all.js'
+    script.async = true
+    document.body.appendChild(script)
 
-  return () => {
-    if (document.body.contains(script)) {
-      document.body.removeChild(script)
+    return () => {
+      if (document.body.contains(script)) {
+        document.body.removeChild(script)
+      }
     }
-  }
-}, [])
+  }, [])
 
   
   const handleImageUpload = () => {
-  if (!window.cloudinary) {
-    toast.error('Upload widget not loaded yet. Please wait a moment and try again.')
-    return
-  }
-
-  const widget = window.cloudinary.createUploadWidget(
-    {
-      cloudName: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
-      uploadPreset: process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET,
-      folder: 'epitome-elegance/products',
-      sources: ['local', 'camera'],
-      multiple: true,
-      maxFileSize: 5_000_000,
-      clientAllowedFormats: ['jpg', 'jpeg', 'png', 'webp'],
-    },
-    (error: any, result: any) => {
-      if (error) {
-        console.error('Upload error:', error)
-        toast.error('Upload failed')
-        setUploading(false)
-        return
-      }
-
-      if (result.event === 'queues-start') {
-        setUploading(true)
-      }
-
-      if (result.event === 'success') {
-        setImages(prev => [...prev, result.info.secure_url])
-      }
-
-      if (result.event === 'queues-end') {
-        setUploading(false)
-      }
+    if (!process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || !process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET) {
+      toast.error('Cloudinary is not configured. Missing env vars.')
+      return
     }
-  )
 
-  widget.open()
-}
+    if (!window.cloudinary) {
+      toast.error('Upload widget not loaded yet. Please wait a moment and try again.')
+      return
+    }
+
+    const widget = window.cloudinary.createUploadWidget(
+      {
+        cloudName: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
+        uploadPreset: process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET,
+        folder: 'epitome-elegance/products',
+        sources: ['local', 'camera'],
+        multiple: true,
+        maxFileSize: 5_000_000,
+        clientAllowedFormats: ['jpg', 'jpeg', 'png', 'webp'],
+      },
+      (error: any, result: any) => {
+        if (error) {
+          console.error('Upload error:', error)
+          toast.error('Upload failed')
+          setUploading(false)
+          return
+        }
+
+        if (result?.event === 'queues-start') {
+          setUploading(true)
+        }
+
+        if (result?.event === 'success') {
+          const url = result?.info?.secure_url
+          if (typeof url === 'string' && url.trim()) {
+            setImages(prev => [...prev, url])
+          }
+        }
+
+        if (result?.event === 'queues-end' || result?.event === 'close') {
+          setUploading(false)
+        }
+      }
+    )
+
+    widget.open()
+  }
 
   
   const removeImage = (url: string) => {
-    setImages(images.filter((img) => img !== url))
+    setImages(prev => prev.filter((img) => img !== url))
     toast.success('Image removed')
   }
   
-  const addVariant = () => setVariants([...variants, { size: '', color: '', stock: 0, price: parseFloat(formData.price as any) || 0 }])
-  const removeVariant = (index: number) => setVariants(variants.filter((_, i) => i !== index))
+  const addVariant = () =>
+    setVariants(prev => [...prev, { size: '', color: '', stock: 0, price: parseFloat(formData.price as any) || 0 }])
+  const removeVariant = (index: number) => setVariants(prev => prev.filter((_, i) => i !== index))
   
   const handleVariantChange = (index: number, field: string, value: any) => {
     const newVariants = [...variants]
@@ -174,7 +184,7 @@ export default function ProductForm({ product, categories }: ProductFormProps) {
     setFormData(prev => ({ ...prev, slug }))
   }
   
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
     
     console.log('Selected categories:', selectedCategories) // Debug log
@@ -483,15 +493,6 @@ export default function ProductForm({ product, categories }: ProductFormProps) {
   <UploadCloud className="w-4 h-4" />
   <span>{uploading ? 'Uploading...' : 'Upload Images'}</span>
 </button>
-
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            multiple
-            onChange={handleImageUpload}
-            className="hidden"
-          />
         </div>
 
         {images.length === 0 && (
