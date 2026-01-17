@@ -1,11 +1,10 @@
 // src/app/api/admin/products/route.ts
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { verifyAdmin } from '@/lib/auth'
+
 
 export async function POST(request: Request) {
-  const admin = await verifyAdmin(request)
-  if (!admin) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  
   
   const data = await request.json()
   

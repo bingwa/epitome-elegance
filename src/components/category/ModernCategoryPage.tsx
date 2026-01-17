@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { FunnelIcon, Squares2X2Icon, Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
-import { ProductCard } from '@/components/product/ProductCard'
+import  ProductCard  from '@/components/product/ProductCard'
 import { formatPrice } from '@/lib/utils'
 import { motion, AnimatePresence } from 'framer-motion'
 

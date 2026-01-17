@@ -1,4 +1,4 @@
-import prisma from '@/lib/prisma'
+import { prisma } from '@/lib/prisma'
 import ProductCard from '@/components/product/ProductCard'
 
 export default async function WomenPage() {
