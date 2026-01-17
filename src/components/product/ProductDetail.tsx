@@ -48,14 +48,14 @@ export function ProductDetailPage({ product, relatedProducts }: ProductDetailPag
   const uniqueColors = useMemo(() => {
     const colors: string[] = (product.variants ?? [])
       .map((v: any) => String(v?.color ?? ''))
-      .filter((c) => c.trim() !== '')
+      .filter((c: string) => c.trim() !== '')
     return Array.from(new Set(colors))
   }, [product.variants])
 
   const uniqueSizes = useMemo(() => {
     const sizes: string[] = (product.variants ?? [])
       .map((v: any) => String(v?.size ?? ''))
-      .filter((s) => s.trim() !== '')
+      .filter((s: string) => s.trim() !== '')
     return Array.from(new Set(sizes))
   }, [product.variants])
 
