@@ -1,38 +1,51 @@
-import { prisma } from '@/lib/prisma'
+// src/app/admin/inventory/page.tsx
 import InventoryTable from '@/components/admin/InventoryTable'
-import { AlertTriangle } from 'lucide-react'
 
 export default async function InventoryPage() {
-  const products = await prisma.product.findMany({
-    include: {
-      category: true,
-      variants: true
-    },
-    orderBy: { stockQuantity: 'asc' }
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/inventory`, {
+    cache: 'no-store',
   })
   
-  const lowStock = products.filter(p => p.stockQuantity < 10)
+  const data = await res.json()
   
+  // Transform null to undefined for TypeScript compatibility
+  const transformedProducts = data.inventory.map((product: any) => ({
+    ...product,
+    category: product.category || undefined,
+    variants: product.variants?.map((v: any) => ({
+      ...v,
+      size: v.size ?? undefined,
+      color: v.color ?? undefined,
+      colorHex: v.colorHex ?? undefined,
+    })) || [],
+  }))
+
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-display font-bold text-gray-900">Inventory Management</h1>
-        <p className="text-gray-600 mt-1">Track and manage product stock levels</p>
-      </div>
+    <div className="p-8">
+      <h1 className="text-3xl font-bold mb-6">Inventory Management</h1>
       
-      {lowStock.length > 0 && (
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 flex items-start space-x-3">
-          <AlertTriangle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
-          <div>
-            <h3 className="font-display font-semibold text-yellow-900">Low Stock Alert</h3>
-            <p className="text-sm text-yellow-800 mt-1">
-              {lowStock.length} product{lowStock.length > 1 ? 's' : ''} running low on stock
-            </p>
+      {data.stats && (
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+          <div className="bg-white p-6 rounded-lg border">
+            <p className="text-gray-600">Total Products</p>
+            <p className="text-2xl font-bold">{data.stats.totalProducts}</p>
+          </div>
+          <div className="bg-white p-6 rounded-lg border">
+            <p className="text-gray-600">In Stock</p>
+            <p className="text-2xl font-bold text-green-600">{data.stats.inStock}</p>
+          </div>
+          <div className="bg-white p-6 rounded-lg border">
+            <p className="text-gray-600">Low Stock</p>
+            <p className="text-2xl font-bold text-yellow-600">{data.stats.lowStock}</p>
+          </div>
+          <div className="bg-white p-6 rounded-lg border">
+            <p className="text-gray-600">Out of Stock</p>
+            <p className="text-2xl font-bold text-red-600">{data.stats.outOfStock}</p>
           </div>
         </div>
       )}
       
-      <InventoryTable products={products} />
+      <InventoryTable products={transformedProducts} />
     </div>
   )
 }
