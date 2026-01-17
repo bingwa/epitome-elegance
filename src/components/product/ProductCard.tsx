@@ -1,4 +1,5 @@
 'use client'
+import type React from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { HeartIcon } from '@heroicons/react/24/outline'
@@ -17,7 +18,12 @@ interface Product {
   }
 }
 
-export default function ProductCard({ product }: { product: Product }) {
+interface ProductCardProps {
+  product: Product
+  className?: string
+}
+
+export default function ProductCard({ product, className }: ProductCardProps) {
   const { items: wishlistItems, addItem: addToWishlist, removeItem: removeFromWishlist } = useWishlist()
   const isInWishlist = wishlistItems.some(item => item.productId === product.id)
 
@@ -49,7 +55,7 @@ export default function ProductCard({ product }: { product: Product }) {
 
   return (
     <Link href={`/products/${product.slug}`} className="group block h-full">
-      <div className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 h-full flex flex-col">
+      <div className={`bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 h-full flex flex-col ${className ?? ''}`.trim()}>
         {/* Image Container */}
         <div className="relative aspect-[3/4] overflow-hidden bg-gray-100">
           <Image

@@ -81,10 +81,6 @@ export function OrderSummary() {
               <span>{formatPrice(total)}</span>
             </div>
           </div>
-
-          <button className="w-full mt-6 py-3 bg-gold-500 text-black font-bold rounded hover:bg-gold-600 transition-colors">
-            Proceed to Checkout
-          </button>
         </>
       )}
     </div>
