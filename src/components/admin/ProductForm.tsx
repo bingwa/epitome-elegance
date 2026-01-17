@@ -18,6 +18,13 @@ interface Category {
   gender: string
 }
 
+interface Variant {
+  size: string
+  color: string
+  stock: number
+  price: number
+}
+
 interface ProductFormProps {
   product?: any
   categories: Category[]
@@ -54,7 +61,7 @@ export default function ProductForm({ product, categories }: ProductFormProps) {
   
   const [images, setImages] = useState<string[]>(() => product?.images?.map((img: any) => img.url) || [])
   
-  const [variants, setVariants] = useState(() =>
+  const [variants, setVariants] = useState<Variant[]>(() =>
     product?.variants?.map((v: any) => ({
       size: v.size || '',
       color: v.color || '',
