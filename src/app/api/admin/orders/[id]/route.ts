@@ -20,7 +20,7 @@ async function verifyAdmin() {
 // PATCH update order (fulfillment status, tracking, etc.)
 export async function PATCH(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> } 
 ) {
   const admin = await verifyAdmin()
   if (!admin) {
@@ -32,7 +32,7 @@ export async function PATCH(
     
     // Check if order exists
     const order = await prisma.order.findUnique({
-      where: { id: params.id }
+      where: { id:  (await params).id }
     })
     
     if (!order) {
@@ -66,7 +66,7 @@ export async function PATCH(
     
     // Update order
     const updatedOrder = await prisma.order.update({
-      where: { id: params.id },
+      where: { id: (await params).id },
       data: updateData
     })
     
@@ -82,7 +82,7 @@ export async function PATCH(
       
       await prisma.orderTracking.create({
         data: {
-          orderId: params.id,
+          orderId: (await params).id,
           status: data.fulfillmentStatus,
           description: statusDescriptions[data.fulfillmentStatus] || data.fulfillmentStatus,
           location: 'Warehouse'

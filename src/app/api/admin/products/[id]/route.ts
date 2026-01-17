@@ -21,13 +21,13 @@ async function verifyAdmin() {
 
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }>  }
 ) {
   try {
     await verifyAdmin()
 
     const data = await request.json()
-    const productId = params.id
+    const productId = (await params).id
 
     // Check if product exists
     const existingProduct = await prisma.product.findUnique({
@@ -118,12 +118,12 @@ export async function PUT(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await verifyAdmin()
 
-    const productId = params.id
+    const productId = (await params).id
 
     await prisma.product.delete({
       where: { id: productId },
