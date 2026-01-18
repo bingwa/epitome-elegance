@@ -2,6 +2,9 @@ import { notFound } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 import { OrderConfirmation } from '@/components/order/OrderConfirmation'
 
+
+export const dynamic = 'force-dynamic'
+
 interface OrderConfirmationPageProps {
   params: Promise<{
     id: string

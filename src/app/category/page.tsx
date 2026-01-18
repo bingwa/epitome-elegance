@@ -3,6 +3,9 @@ import { Metadata } from 'next'
 import { prisma } from '@/lib/prisma'
 import { ModernCategoryPage } from '@/components/category/ModernCategoryPage'
 
+export const dynamic = 'force-dynamic'
+
+
 interface CategoryPageProps {
   params: Promise<{
     gender: string

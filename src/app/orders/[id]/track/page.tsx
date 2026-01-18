@@ -2,6 +2,9 @@ import { notFound } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 import { OrderTracking } from '@/components/order/OrderTracking'
 
+export const dynamic = 'force-dynamic'
+
+
 interface OrderTrackingPageProps {
   params: Promise<{
     id: string

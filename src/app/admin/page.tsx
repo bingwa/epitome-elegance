@@ -4,6 +4,9 @@ import SalesChart from '@/components/admin/SalesChart'
 import RecentOrders from '@/components/admin/RecentOrders'
 import { Package, ShoppingCart, DollarSign, TrendingUp } from 'lucide-react'
 
+export const dynamic = 'force-dynamic'
+
+
 async function getSalesData() {
   const last7Days = new Date()
   last7Days.setDate(last7Days.getDate() - 7)

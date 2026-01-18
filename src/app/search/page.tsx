@@ -2,6 +2,8 @@ import { Suspense } from 'react'
 import { prisma } from '@/lib/prisma'
 import { SearchResults } from '@/components/search/SearchResults'
 
+export const dynamic = 'force-dynamic'
+
 interface SearchPageProps {
   searchParams: Promise<{
     q?: string
