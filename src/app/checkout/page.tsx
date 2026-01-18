@@ -1,6 +1,8 @@
 import { Metadata } from 'next'
 import { CheckoutPage } from '@/components/checkout/CheckoutPage'
 
+export const dynamic = 'force-dynamic'
+
 // This file is a Server Component, so exporting metadata is allowed.
 export const metadata: Metadata = {
   title: 'Secure Checkout | Epitome Elegance',

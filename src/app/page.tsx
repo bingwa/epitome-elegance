@@ -3,6 +3,9 @@ import ProductCard from '@/components/product/ProductCard'
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
 
+export const dynamic = 'force-dynamic'
+
+
 export default async function Home() {
   const [featuredProducts, newArrivals] = await Promise.all([
     getFeaturedProducts(4), // Fetch 4 for specific grid

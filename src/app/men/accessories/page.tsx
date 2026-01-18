@@ -1,6 +1,9 @@
 import { CategoryPage } from '@/components/category/CategoryPage'
 import { getProductsByCategory } from '@/lib/categoryProducts'
 
+export const dynamic = 'force-dynamic'
+
+
 export const metadata = {
   title: "Men's Accessories | Epitome Elegance",
   description: "Luxury watches, briefcases, and accessories for the sophisticated man.",

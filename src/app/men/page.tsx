@@ -1,6 +1,9 @@
 import { fashionDataService } from '@/lib/dataFetcher'
 import { CategoryPage } from '@/components/category/CategoryPage'
 
+export const dynamic = 'force-dynamic'
+
+
 export const metadata = {
   title: "Men's Fashion | Epitome Elegance",
   description: "Premium men's fashion at Epitome Elegance. Luxury clothing, accessories, and watches for the modern Kenyan gentleman.",
