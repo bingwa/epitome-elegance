@@ -21,32 +21,35 @@ export default function AdminLogin() {
     }
   }, [])
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
+ const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault()
+  setLoading(true)
 
-    try {
-      const res = await fetch('/api/admin/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-      })
+  try {
+    const res = await fetch('/api/admin/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+      credentials: 'include', // Ensure cookies are included
+    })
 
-      const data = await res.json()
+    const data = await res.json()
 
-      if (res.ok) {
-        toast.success('Welcome back!')
-        router.push('/admin')
-        router.refresh()
-      } else {
-        toast.error(data.error || 'Invalid credentials')
-      }
-    } catch (error) {
-      toast.error('An error occurred')
-    } finally {
+    if (res.ok) {
+      toast.success('Welcome back!')
+      // Use window.location for full reload with cookies
+      window.location.href = '/admin'
+    } else {
+      toast.error(data.error || 'Invalid credentials')
       setLoading(false)
     }
+  } catch (error) {
+    toast.error('An error occurred')
+    setLoading(false)
   }
+  // Don't set loading to false on success - page is redirecting
+}
+
 
   return (
     <div className="min-h-screen flex bg-gray-50">
