@@ -88,7 +88,6 @@ export async function getProductBySlug(slug: string) {
   return await prisma.product.findUnique({
     where: {
       slug,
-      isActive: true,
     },
     include: {
       category: true,
