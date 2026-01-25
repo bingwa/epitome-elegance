@@ -1,5 +1,5 @@
 import { CategoryPage } from '@/components/category/CategoryPage'
-import { getProductsByCategory } from '@/lib/categoryProducts'
+import { getProductsByCategorySlug } from '@/lib/categoryProducts'
 
 export const dynamic = 'force-dynamic'
 
@@ -17,7 +17,7 @@ export default async function MensAccessoriesPage({
   const params = await searchParams
   const page = parseInt(params.page as string || '1')
 
-  const { products, pagination } = await getProductsByCategory('Accessories', {
+  const { products, pagination } = await getProductsByCategorySlug('accessories', {
     page,
     limit: 12,
     minPrice: params.min_price ? parseFloat(params.min_price as string) : undefined,

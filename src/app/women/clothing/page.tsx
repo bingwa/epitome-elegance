@@ -1,5 +1,5 @@
 import { CategoryPage } from '@/components/category/CategoryPage'
-import { getProductsByCategory } from '@/lib/categoryProducts'
+import { getProductsByCategorySlug } from '@/lib/categoryProducts'
 
 export const metadata = {
   title: "Women's Clothing | Epitome Elegance",
@@ -14,7 +14,7 @@ export default async function WomensClothingPage({
   const params = await searchParams
   const page = parseInt(params.page as string || '1')
 
-  const { products, pagination } = await getProductsByCategory('Clothing', {
+  const { products, pagination } = await getProductsByCategorySlug('clothing', {
     page,
     limit: 12,
     minPrice: params.min_price ? parseFloat(params.min_price as string) : undefined,

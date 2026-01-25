@@ -1,38 +1,38 @@
 import { CategoryPage } from '@/components/category/CategoryPage'
-import { getProductsByCategory } from '@/lib/categoryProducts'
+import { getProductsByCategorySlug } from '@/lib/categoryProducts'
 
 export const metadata = {
-  title: "Women's Bags | Epitome Elegance",
-  description: "Luxury handbags, purses, and accessories for the elegant woman.",
+  title: "Women's Shoes | Epitome Elegance",
+  description: "Elegant heels, flats, and footwear for every occasion.",
 }
 
-export default async function WomensBagsPage({
-  searchParams
+export default async function WomensShoesPage({
+  searchParams,
 }: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }) {
   const params = await searchParams
-  const page = parseInt(params.page as string || '1')
+  const page = parseInt((params.page as string) || '1')
 
-  const { products, pagination } = await getProductsByCategory('Bags', {
+  const { products, pagination } = await getProductsByCategorySlug('shoes', {
     page,
     limit: 12,
     minPrice: params.min_price ? parseFloat(params.min_price as string) : undefined,
     maxPrice: params.max_price ? parseFloat(params.max_price as string) : undefined,
     sort: params.sort as string,
-    gender: 'FEMALE'
+    gender: 'FEMALE',
   })
 
   const category = {
-    name: "Bags",
-    slug: "bags",
-    description: "Luxury handbags, purses, and accessories for the elegant woman.",
-    gender: 'FEMALE'
+    name: "Shoes",
+    slug: "shoes",
+    description: "Elegant heels, flats, and footwear for every occasion.",
+    gender: 'FEMALE',
   }
 
   const priceRange = {
     min: products.length > 0 ? Math.min(...products.map(p => p.price)) : 0,
-    max: products.length > 0 ? Math.max(...products.map(p => p.price)) : 100000
+    max: products.length > 0 ? Math.max(...products.map(p => p.price)) : 100000,
   }
 
   return (

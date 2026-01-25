@@ -1,5 +1,6 @@
 import { fashionDataService } from '@/lib/dataFetcher'
 import { CategoryPage } from '@/components/category/CategoryPage'
+import { getProductsByCategorySlug } from '@/lib/categoryProducts'
 
 export const dynamic = 'force-dynamic'
 

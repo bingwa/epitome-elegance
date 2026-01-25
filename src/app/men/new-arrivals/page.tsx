@@ -1,22 +1,24 @@
 import { CategoryPage } from '@/components/category/CategoryPage'
 import { getFeaturedProducts } from '@/lib/categoryProducts'
 
+export const dynamic = 'force-dynamic'
+
 export const metadata = {
   title: "Men's New Arrivals | Epitome Elegance",
   description: "Latest fashion pieces for men - Fresh styles just landed.",
 }
 
 export default async function MensNewArrivalsPage({
-  searchParams
+  searchParams,
 }: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }) {
   const params = await searchParams
-  const page = parseInt(params.page as string || '1')
+  const page = parseInt((params.page as string) || '1')
   const limit = 12
 
   const allProducts = await getFeaturedProducts('MALE', 50)
-  
+
   let filtered = allProducts
 
   if (params.min_price) {
@@ -47,12 +49,12 @@ export default async function MensNewArrivalsPage({
     name: "New Arrivals",
     slug: "new-arrivals",
     description: "Latest fashion pieces for men - Fresh styles just landed.",
-    gender: 'MALE'
+    gender: 'MALE' as const
   }
 
   const priceRange = {
-    min: Math.min(...allProducts.map(p => p.price)),
-    max: Math.max(...allProducts.map(p => p.price))
+    min: allProducts.length > 0 ? Math.min(...allProducts.map(p => p.price)) : 0,
+    max: allProducts.length > 0 ? Math.max(...allProducts.map(p => p.price)) : 100000
   }
 
   const pagination = {
