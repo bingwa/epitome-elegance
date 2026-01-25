@@ -1,39 +1,37 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import { cookies } from 'next/headers'
 import jwt from 'jsonwebtoken'
 
-export function middleware(request: NextRequest) {
-  const path = request.nextUrl.pathname
-  
-  const requestHeaders = new Headers(request.headers)
-  requestHeaders.set('x-pathname', path)
-  
-  // Allow admin-login page
-  if (path === '/admin-login') {
-    return NextResponse.next({ request: { headers: requestHeaders } })
-  }
-  
-  // Protect admin routes
-  if (path.startsWith('/admin')) {
-    const token = request.cookies.get('admin_token')?.value
-    
+export async function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl
+
+  // Admin routes protection
+  if (pathname.startsWith('/admin')) {
+    // Allow login page
+    if (pathname === '/admin-login') {
+      return NextResponse.next()
+    }
+
+    // Check for admin token
+    const cookieStore = await cookies()
+    const token = cookieStore.get('admin_token')?.value
+
     if (!token) {
       return NextResponse.redirect(new URL('/admin-login', request.url))
     }
-    
+
     try {
       jwt.verify(token, process.env.ADMIN_JWT_SECRET!)
-      return NextResponse.next({ request: { headers: requestHeaders } })
+      return NextResponse.next()
     } catch {
-      const response = NextResponse.redirect(new URL('/admin-login', request.url))
-      response.cookies.delete('admin_token')
-      return response
+      return NextResponse.redirect(new URL('/admin-login', request.url))
     }
   }
-  
-  return NextResponse.next({ request: { headers: requestHeaders } })
+
+  return NextResponse.next()
 }
 
 export const config = {
-  matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
+  matcher: ['/admin/:path*'],
 }

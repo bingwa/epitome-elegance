@@ -21,7 +21,7 @@ async function verifyAdmin() {
 
 export async function PUT(
   request: Request,
-  { params }: { params: Promise<{ id: string }>  }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await verifyAdmin()
@@ -42,6 +42,20 @@ export async function PUT(
       )
     }
 
+    // ✅ Check SKU uniqueness if it changed
+    if (data.sku !== existingProduct.sku) {
+      const skuExists = await prisma.product.findUnique({
+        where: { sku: data.sku },
+      })
+      
+      if (skuExists) {
+        return NextResponse.json(
+          { error: 'A product with this SKU already exists' },
+          { status: 400 }
+        )
+      }
+    }
+
     // Use first selected category as primary
     const primaryCategoryId = data.categoryIds?.[0]
 
@@ -52,13 +66,13 @@ export async function PUT(
         name: data.name,
         slug: data.slug,
         description: data.description,
-        shortDesc: data.shortDesc || null,
+        shortDesc: data.shortDesc || "",  // ✅ Empty string, not null
         price: parseFloat(data.price),
         comparePrice: data.comparePrice ? parseFloat(data.comparePrice) : null,
         sku: data.sku,
         stockQuantity: parseInt(data.stockQuantity) || 0,
-        brand: data.brand || null,
-        tags: data.tags || null,
+        brand: data.brand || "",  // ✅ Empty string, not null
+        tags: data.tags || "",    // ✅ Empty string, not null
         isActive: data.isActive ?? true,
         isFeatured: data.isFeatured ?? false,
         // Update category
@@ -72,18 +86,19 @@ export async function PUT(
             url,
             altText: `${data.name} - Image ${index + 1}`,
             isMain: index === 0,
+            displayOrder: index,
           })) || [],
         },
         // Delete old variants and create new ones
         variants: {
           deleteMany: {},
-          create: data.variants?.map((variant: any) => ({
+          create: data.variants?.map((variant: any, idx: number) => ({
             size: variant.size || null,
             color: variant.color || null,
             colorHex: null,
             stock: parseInt(variant.stock) || 0,
             price: parseFloat(variant.price) || parseFloat(data.price),
-            sku: data.sku,
+            sku: `${data.sku}-${variant.size || idx + 1}`,  // ✅ Unique SKU per variant
           })) || [],
         },
       },
