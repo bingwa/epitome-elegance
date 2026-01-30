@@ -18,5 +18,6 @@ export default async function AdminLayout({ children }: { children: ReactNode })
     redirect('/admin-login')
   }
 
+  // Wrap with AdminLayoutClient (was missing!)
   return <AdminLayoutClient>{children}</AdminLayoutClient>
 }

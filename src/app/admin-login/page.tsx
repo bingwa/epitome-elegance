@@ -52,14 +52,14 @@ export default function AdminLogin() {
 
 
   return (
+   <div className="-mt-16 lg:-mt-20">  {/* Add this negative margin */}
     <div className="min-h-screen flex bg-gray-50">
       {/* Left Side - Branding */}
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white p-12 flex-col justify-between relative overflow-hidden">
+        <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white p-12 flex-col justify-between relative overflow-hidden">
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-0 left-0 w-96 h-96 bg-yellow-500 rounded-full blur-3xl" />
           <div className="absolute bottom-0 right-0 w-96 h-96 bg-yellow-600 rounded-full blur-3xl" />
         </div>
-
         <div className="relative z-10">
           <Link href="/" className="flex items-center space-x-3 group">
             <div className="p-3 bg-white/10 backdrop-blur-sm rounded-xl group-hover:bg-white/20 transition">
@@ -185,6 +185,7 @@ export default function AdminLogin() {
           </p>
         </div>
       </div>
+    </div>
     </div>
   )
 }
