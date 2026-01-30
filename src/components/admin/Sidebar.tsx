@@ -19,7 +19,7 @@ export default function Sidebar() {
   
   const handleLogout = async () => {
     await fetch('/api/admin/auth/logout', { method: 'POST' })
-    window.location.href = '/admin/login'
+    window.location.href = '/admin-login'
   }
   
   return (

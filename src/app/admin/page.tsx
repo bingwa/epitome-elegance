@@ -48,10 +48,10 @@ export default async function AdminDashboard() {
         items: { include: { product: true } }
       }
     }),
-    // Sales data
+    
     getSalesData(),
-    // Low stock
-    prisma.product.count({ where: { stockQuantity: { lt: 10 } } })
+    
+    prisma.product.count({ where: { stockQuantity: { lt: 1 } } })
   ])
   
   const [productCount, orderCount, revenue, pendingOrders] = stats
@@ -69,14 +69,14 @@ export default async function AdminDashboard() {
           title="Total Revenue"
           value={`KSh ${(revenue._sum.total || 0).toLocaleString()}`}
           icon={DollarSign}
-          trend="+12.5%"
+          trend="0"
           trendUp={true}
         />
         <StatsCard
           title="Total Orders"
           value={orderCount.toString()}
           icon={ShoppingCart}
-          trend="+8.2%"
+          trend="0"
           trendUp={true}
         />
         <StatsCard
