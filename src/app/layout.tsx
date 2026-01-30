@@ -37,7 +37,7 @@ export default function RootLayout({
     <html lang="en" className={`${inter.variable} ${playfair.variable} ${signatieFont.variable}`}>
       <body className="font-sans antialiased">
         <Header />
-        <main className="min-h-screen">
+        <main className="[&_*]:!scroll-mt-24 pt-16 md:pt-20 lg:pt-24">
           {children}
         </main>
         <Footer />

@@ -66,6 +66,7 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
                   type="button"
                   className="relative -m-2 inline-flex items-center justify-center rounded-md p-2 text-gray-400"
                   onClick={onClose}
+                  aria-label="Close menu"
                 >
                   <XMarkIcon className="h-6 w-6" />
                 </button>

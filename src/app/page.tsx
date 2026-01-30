@@ -14,12 +14,12 @@ export default async function Home() {
 
   return (
     <div className="bg-white">
-      {/* 1. Hero Section (Keep existing one or simpler version) */}
-      <section className="relative h-screen min-h-[600px] flex items-center justify-center overflow-hidden">
-        {/* Background Image - Replace with your actual hero image */}
+     
+      <section className="relative pt-16 lg:pt-20 h-screen min-h-[600px] flex items-center justify-center overflow-hidden">
+        
         <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat bg-fixed"
-          style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=2070&auto=format&fit=crop)' }}
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat bg-fixed "
+          style={{ backgroundImage: 'url(/royal-navy-plaid-elegance-hero-banner.png)' }}
         >
           <div className="absolute inset-0 bg-black/40" />
         </div>
@@ -29,7 +29,7 @@ export default async function Home() {
             NEW SEASON 2026
           </span>
           <h1 className="text-5xl md:text-7xl font-display font-bold mb-6 leading-tight animate-fade-in-up delay-100">
-            Elegance is <br/> <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 to-yellow-500">Not a Choice</span>
+            Style That <br/> <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 to-yellow-500">Speaks</span>
           </h1>
           <p className="text-lg md:text-xl text-gray-200 max-w-2xl mx-auto mb-10 font-light animate-fade-in-up delay-200">
             Discover our curated collection of luxury fashion designed to define your personal style statement.
@@ -91,7 +91,7 @@ export default async function Home() {
             <Link href="/women" className="relative group overflow-hidden rounded-2xl h-full">
               <div 
                 className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
-                style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&fit=crop&q=80)' }}
+                style={{ backgroundImage: 'url(/boss-lady-collection.png)' }}
               />
               <div className="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition-colors" />
               <div className="absolute bottom-8 left-8 text-white">
@@ -104,7 +104,7 @@ export default async function Home() {
               <Link href="/men" className="relative group overflow-hidden rounded-2xl">
                 <div 
                   className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
-                  style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1617137968427-85924c809a29?auto=format&fit=crop&q=80)' }}
+                  style={{ backgroundImage: 'url(/mens-collection-banner.png)' }} 
                 />
                 <div className="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition-colors" />
                 <div className="absolute bottom-8 left-8 text-white">
@@ -114,7 +114,7 @@ export default async function Home() {
               <Link href="/accessories" className="relative group overflow-hidden rounded-2xl">
                 <div 
                   className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
-                  style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1590736704728-f4730bb30770?auto=format&fit=crop&q=80)' }}
+                  style={{ backgroundImage: 'url(/womens-bags-collection.png)' }}
                 />
                 <div className="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition-colors" />
                 <div className="absolute bottom-8 left-8 text-white">

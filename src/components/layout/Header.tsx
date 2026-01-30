@@ -3,9 +3,9 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { usePathname } from 'next/navigation' // ADD THIS
+import { usePathname } from 'next/navigation'
 import { ShoppingBagIcon, MagnifyingGlassIcon, Bars3Icon, UserIcon, XMarkIcon } from '@heroicons/react/24/outline'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { useCart, useCartTotals } from '@/hooks/useCart'
 import { MobileMenu } from './MobileMenu'
 import { SearchBar } from '@/components/ui/SearchBar'
@@ -35,34 +35,34 @@ const navigation = [
 ]
 
 export function Header() {
-  const [isScrolled, setIsScrolled] = useState(false)
+  const [isScrolled, setIsScrolled] = useState(true) // Changed to true by default
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const [hoveredMenu, setHoveredMenu] = useState<number | null>(null)
   const cart = useCart()
   const { totalItems } = useCartTotals()
-  const pathname = usePathname() // ADD THIS
+  const pathname = usePathname()
   
-  // ADD THIS: Check if we're on homepage
   const isHome = pathname === '/'
 
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 10)
     }
+    
+    // Set initial state immediately
+    setIsScrolled(window.scrollY > 10)
+    
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  // MODIFY THIS: Only use transparent bg on home when not scrolled
-  const shouldBeTransparent = isHome && !isScrolled
+  const shouldBeTransparent = false
 
   return (
     <>
-      {/* Mobile Menu */}
       <MobileMenu isOpen={isMobileMenuOpen} onClose={() => setIsMobileMenuOpen(false)} />
 
-      {/* Search Modal */}
       {isSearchOpen && (
         <div
           className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-start justify-center pt-20"
@@ -89,7 +89,6 @@ export function Header() {
         </div>
       )}
 
-      {/* Header */}
       <header
         className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
           shouldBeTransparent
@@ -99,7 +98,6 @@ export function Header() {
       >
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-20">
-            {/* Mobile menu button */}
             <button
               onClick={() => setIsMobileMenuOpen(true)}
               className={`lg:hidden p-2 rounded-lg transition-colors ${
@@ -111,7 +109,6 @@ export function Header() {
               <Bars3Icon className="w-6 h-6" />
             </button>
 
-            {/* Logo */}
             <Link href="/" className="flex items-center space-x-3 group">
               <div className={`relative w-10 h-10 rounded-xl overflow-hidden transition-all`}>
                 <Image
@@ -128,7 +125,6 @@ export function Header() {
               </span>
             </Link>
 
-            {/* Desktop Navigation */}
             <nav className="hidden lg:flex items-center space-x-8">
               {navigation.map((item, index) => (
                 <div
@@ -153,7 +149,6 @@ export function Header() {
                     }`} />
                   </Link>
 
-                  {/* Submenu */}
                   {item.submenu && hoveredMenu === index && (
                     <motion.div
                       initial={{ opacity: 0, y: 10 }}
@@ -176,7 +171,6 @@ export function Header() {
               ))}
             </nav>
 
-            {/* Icons */}
             <div className="flex items-center space-x-2 lg:space-x-4">
               <button
                 onClick={() => setIsSearchOpen(true)}
